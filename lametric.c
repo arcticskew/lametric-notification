@@ -24,13 +24,19 @@ struct MemoryStruct {
     size_t size;
 };
 
+void print_usage(char *prog_name) {
+    fprintf(stderr, "Usage: %s"
+            " [-p priority] [-i icon] [-s sound] [-h host]"
+            " message\n", prog_name);
+}
+
 static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp) {
     size_t realsize = size * nmemb;
     struct MemoryStruct *mem = (struct MemoryStruct *)userp;
 
     mem->memory = realloc(mem->memory, mem->size + realsize + 1);
     if(mem->memory == NULL) {
-        /* out of memory! */ 
+        /* out of memory! */
         printf("not enough memory (realloc returned NULL)\n");
         return 0;
     }
@@ -50,7 +56,6 @@ int msg_to_lametric(char url[], char key[], char json[]) {
     char userpwd[75];
     strcpy(userpwd, "dev:");
     strcat(userpwd, key);
-    printf("userpwd: %s\n", userpwd);
 
     // set up memory structure to receive response
     struct MemoryStruct data;
@@ -124,7 +129,7 @@ int main(int argc, char *argv[]) {
     char priority[10];
     char icon[10];
     char *message = NULL;
-    
+
     // optional parameters
     char *sound = NULL;
 
@@ -188,7 +193,7 @@ int main(int argc, char *argv[]) {
                 printf("hmmm\n");
                 break;
             default:
-                fprintf(stderr, "Usage: %s [-p priority] [-i icon] [-s sound] [-h host] message\n", argv[0]);
+                print_usage(argv[0]);
                 return 0;
         }
     }
@@ -196,7 +201,7 @@ int main(int argc, char *argv[]) {
     if (optind < argc) {
         message = strdup(argv[optind++]);
     } else {
-        fprintf(stderr, "Usage: %s [-p priority] [-i icon] [-s sound] [-h host] message\n", argv[0]);
+        print_usage(argv[0]);
         return(1);
     }
 
